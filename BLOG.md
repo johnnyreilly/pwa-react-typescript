@@ -199,7 +199,97 @@ const Home: React.FC = () => (
 export default Home;
 ```
 
+#### Code splitting
 
+Now we've split up our app into multiple sections, we're going to split the code too.  A good way to improve loading times for PWAs is to ensure that the code is not built into big files.  That's exactly what our app does right now. If you run `yarn build` you'll see what this looks like:
+
+```
+  47.88 KB  build/static/js/2.89bc6648.chunk.js
+  784 B     build/static/js/runtime-main.9c116153.js
+  555 B     build/static/js/main.bc740179.chunk.js
+  269 B     build/static/css/main.5ecd60fb.chunk.css
+```
+
+Essentially the thing to notice above is our `build/static/js/main.bc740179.chunk.js` file which represents the compiled output of building the TypeScript files that make up our app.
+
+`create-react-app` is built upon webpack.  There is excellent support for code splitting in webpack and hence [create-react-app supports it by default](https://reactjs.org/docs/code-splitting.html#code-splitting).  Let's apply it to our app.  Again we're going to change `App.tsx`.
+
+Where we previously had:
+
+```tsx
+import About from "./About";
+import Home from "./Home";
+```
+
+Let's replace with:
+
+```tsx
+const About = lazy(() => import('./About'));
+const Home = lazy(() => import('./Home'));
+```
+
+This is the syntax to lazily load components in React.  You'll note that it internally uses the [dynamic `import()` syntax](https://github.com/tc39/proposal-dynamic-import) which webpack uses as a "split point". 
+
+Let's also give React something to render whilst it waits for the dynamic imports to be resolved. Just inside our `<Router>` component we'll add a `<Suspense>` component too:
+
+```tsx
+  <Router>
+    <Suspense fallback={<div>Loading...</div>}>
+    {/*...*/}
+    </Suspense>
+  </Router>
+```
+
+So our final `App.tsx` component ends up looking like this:
+
+```tsx
+import React, { lazy, Suspense } from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+const About = lazy(() => import("./About"));
+const Home = lazy(() => import("./Home"));
+
+const App: React.FC = () => (
+  <Router>
+    <Suspense fallback={<div>Loading...</div>}>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
+        </ul>
+      </nav>
+      <Switch>
+        <Route path="/about">
+          <About />
+        </Route>
+        <Route path="/">
+          <Home />
+        </Route>
+      </Switch>
+    </Suspense>
+  </Router>
+);
+
+export default App;
+```
+
+This is now a code split application.  How can we tell?  If we run `yarn build` again we'll see something like this:
+
+```
+  47.88 KB          build/static/js/2.89bc6648.chunk.js
+  1.18 KB (+428 B)  build/static/js/runtime-main.415ab5ea.js
+  596 B (+41 B)     build/static/js/main.e60948bb.chunk.js
+  269 B             build/static/css/main.5ecd60fb.chunk.css
+  233 B             build/static/js/4.0c85e1cb.chunk.js
+  228 B             build/static/js/3.eed49094.chunk.js
+```
+
+Note that we now have multiple `*.chunk.js` files.  Our initial `main.*.chunk.js` and then `3.*.chunk.js` representing `Home.tsx` and `4.*.chunk.js` representing `Home.tsx`.
+
+As we continue to build out our app from this point we'll have a great approach in place to ensure each built file isn't too large.
 
 talk about limitations with the existing create-react-app approach. (eg the workbox served from CDN issue)  Show how they can be addressed by ejecting and tweaking configuration.  Link back to github issue which may mean this is unnecesary in future.
 finally, if there's a need for the app to live in a subdirectory of your website (mine did), how is this achieved?
