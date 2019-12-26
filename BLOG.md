@@ -119,6 +119,87 @@ You can use the above properties (and others not yet configured) to control how 
 
 So far, we have a basic PWA in place.  It's installable.  You can run it locally and develop it with `yarn start`.  You can build it ready for deployment with `yarn build`.
 
+What this isn't, is recognisably a web app. In the sense that it doesn't have support for different pages / URLs. We're typically going to want to break up our application this way.  Let's do that now.  We're going to use [`react-router`](https://github.com/ReactTraining/react-router); the de facto routing solution for React. To add it to our project (and the required type definitions for TypeScript) we use:
+
+```
+yarn add react-router-dom @types/react-router-dom
+```
+
+Now let's split up our app into a couple of pages.  We'll replace the existing `App.tsx` with this:
+
+```tsx
+import React from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import About from "./About";
+import Home from "./Home";
+
+const App: React.FC = () => (
+  <Router>
+    <nav>
+      <ul>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/about">About</Link>
+        </li>
+      </ul>
+    </nav>
+    <Switch>
+      <Route path="/about">
+        <About />
+      </Route>
+      <Route path="/">
+        <Home />
+      </Route>
+    </Switch>
+  </Router>
+);
+
+export default App;
+```
+
+This will be our root page. It has the responsiblity of using `react-router` to render the pages we want to serve, and also to provide the links that allow users to navigate to those pages.  In making our changes we'll have broken our test (which checked for a link we've now deleted), so we'll fix it like so:
+
+Replace the `App.test.tsx` with this:
+
+```tsx
+import React from 'react';
+import { render } from '@testing-library/react';
+import App from './App';
+
+test('renders about link', () => {
+  const { getByText } = render(<App />);
+  const linkElement = getByText(/about/i);
+  expect(linkElement).toBeInTheDocument();
+});
+```
+
+You'll have noticed that in our new `App.tsx` we import two new components; `About` and `Home`.  Let's create those.  First `About.tsx`:
+
+```tsx
+import React from "react";
+
+const About: React.FC = () => (
+  <div>This is a PWA</div>
+);
+
+export default About;
+```
+
+Then `Home.tsx`:
+
+```tsx
+import React from "react";
+
+const Home: React.FC = () => (
+  <div>Welcome to your PWA!</div>
+);
+
+export default Home;
+```
+
+
 
 talk about limitations with the existing create-react-app approach. (eg the workbox served from CDN issue)  Show how they can be addressed by ejecting and tweaking configuration.  Link back to github issue which may mean this is unnecesary in future.
 finally, if there's a need for the app to live in a subdirectory of your website (mine did), how is this achieved?
