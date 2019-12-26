@@ -2,7 +2,7 @@
 
 Progressive Web Apps are a (terribly named) wonderful idea.  You can build an app *once* using web technologies which serves all devices and form factors.  It can be accessible over the web, but also surface on the home screen of your Android / iOS device.   That app can work offline, have a splash screen when it launches and have notifications too.  
 
-PWAs can be a money saver for your business. The alternative, should you want an app experience for your users, is building the same application using three different technologies (one for web, one for Android and one for iOS).  When you split your codebase (and often your team)  three ways, it's hard to avoid a multiplication of cost and complexity with a corresponding loss of focus.  PWAs can help here; they are a compelling alternative, not just from a developers standpoint, but from a resourcing one too.  
+PWAs can be a money saver for your business. The alternative, should you want an app experience for your users, is building the same application using three different technologies (one for web, one for Android and one for iOS).  When you take this path it's hard to avoid a multiplication of cost and complexity. It often leads to dividing up the team as each works on a different stack with a corresponding loss of focus.  PWAs can help here; they are a compelling alternative, not just from a developers standpoint, but from a resourcing one too.  
 
 However, the downside of PWAs is that they are more complicated than normal web apps. Writing one from scratch is just less straightforward than a classic web app. There are easy onramps to building a PWA that help you fall into the pit of success.  This post will highlight one of these.  How you can travel from zero to a PWA of your very own using React and TypeScript.
 
@@ -20,7 +20,7 @@ To create our PWA we're going to use [`create-react-app`](https://create-react-a
 npx create-react-app pwa-react-typescript --template typescript
 ```
 
-You now have a react web app built with TypeScript; you can test it locally with:
+This builds you a react web app built with TypeScript; it can be tested locally with:
 
 ```shell
 cd pwa-react-typescript
@@ -47,7 +47,7 @@ Under the bonnet, `create-react-app` is achieving this through the use of techno
 
 The good folks of Google are aware that writing your own PWA can be tricky.  There's much new behaviour to configure and be aware of; it's easy to make mistakes.  Workbox is there to help ease the way forward by implementing default strategies for caching / offline behaviour which can be controlled through configuration.  
 
-A downside of the usage of `Workbox` in `create-react-app` is that (as with most things `create-react-app`) there's little scope for configuration of your own if the defaults don't serve your purpose.  This may change in the future, indeed [there's an open PR which can be tracked](https://github.com/facebook/create-react-app/pull/5369).
+A downside of the usage of `Workbox` in `create-react-app` is that (as with most things `create-react-app`) there's little scope for configuration of your own if the defaults don't serve your purpose.  This may change in the future, indeed [there's an open PR that adds this support](https://github.com/facebook/create-react-app/pull/5369).
 
 #### Icons and splash screens and A2HS, oh my!
 
@@ -117,7 +117,7 @@ You can use the above properties (and others not yet configured) to control how 
 
 #### Where are we?
 
-So far, we have a basic PWA in place.  It's installable.  You can run it locally and develop it with `yarn start`.  You can build it ready for deployment with `yarn build`.
+So far, we have a basic PWA in place.  It's installable.  You can run it locally and develop it with `yarn start`.  You can build it for deployment with `yarn build`.
 
 What this isn't, is recognisably a web app. In the sense that it doesn't have support for different pages / URLs. We're typically going to want to break up our application this way.  Let's do that now.  We're going to use [`react-router`](https://github.com/ReactTraining/react-router); the de facto routing solution for React. To add it to our project (and the required type definitions for TypeScript) we use:
 
@@ -201,7 +201,7 @@ export default Home;
 
 #### Code splitting
 
-Now we've split up our app into multiple sections, we're going to split the code too.  A good way to improve loading times for PWAs is to ensure that the code is not built into big files.  That's exactly what our app does right now. If you run `yarn build` you'll see what this looks like:
+Now we've split up our app into multiple sections, we're going to split the code too.  A good way to improve loading times for PWAs is to ensure that the code is not built into big files.  At the moment our app builds a `single-file.js`. If you run `yarn build` you'll see what this looks like:
 
 ```
   47.88 KB  build/static/js/2.89bc6648.chunk.js
@@ -210,7 +210,7 @@ Now we've split up our app into multiple sections, we're going to split the code
   269 B     build/static/css/main.5ecd60fb.chunk.css
 ```
 
-Essentially the thing to notice above is our `build/static/js/main.bc740179.chunk.js` file which represents the compiled output of building the TypeScript files that make up our app.
+Notice the `build/static/js/main.bc740179.chunk.js` file which represents the compiled output of building the TypeScript files that make up our app.
 
 `create-react-app` is built upon webpack.  There is excellent support for code splitting in webpack and hence [create-react-app supports it by default](https://reactjs.org/docs/code-splitting.html#code-splitting).  Let's apply it to our app.  Again we're going to change `App.tsx`.
 
@@ -240,7 +240,7 @@ Let's also give React something to render whilst it waits for the dynamic import
   </Router>
 ```
 
-So our final `App.tsx` component ends up looking like this:
+The `<Suspense>` component will render the `<div>Loading...</div>` whilst it waits for a routes code to be dynamically loaded. So our final `App.tsx` component ends up looking like this:
 
 ```tsx
 import React, { lazy, Suspense } from "react";
@@ -291,14 +291,12 @@ Note that we now have multiple `*.chunk.js` files.  Our initial `main.*.chunk.js
 
 As we continue to build out our app from this point we'll have a great approach in place to ensure each built file isn't too large.
 
+---------------
+
 talk about limitations with the existing create-react-app approach. (eg the workbox served from CDN issue)  Show how they can be addressed by ejecting and tweaking configuration.  Link back to github issue which may mean this is unnecesary in future.
 finally, if there's a need for the app to live in a subdirectory of your website (mine did), how is this achieved?
 
-
-
 Base-url
 Install button
-
-Code splitting?
 
 
