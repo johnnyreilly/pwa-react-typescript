@@ -2,7 +2,7 @@
 
 Progressive Web Apps are a (terribly named) wonderful idea.  You can build an app *once* using web technologies which serves all devices and form factors.  It can be accessible over the web, but also surface on the home screen of your Android / iOS device.   That app can work offline, have a splash screen when it launches and have notifications too.  
 
-PWAs can be a money saver for your business. The alternative, should you want an app experience for your users, is building the same application using three different technologies (one for web, one for Android and one for iOS).  When you take this path it's hard to avoid a multiplication of cost and complexity. It often leads to dividing up the team as each works on a different stack with a corresponding loss of focus.  PWAs can help here; they are a compelling alternative, not just from a developers standpoint, but from a resourcing one too.  
+PWAs can be a money saver for your business. The alternative, should you want an app experience for your users, is building the same application using three different technologies (one for web, one for Android and one for iOS).  When you take this path it's hard to avoid a multiplication of cost and complexity. It often leads to dividing up the team as each works on a different stack. It's common to lose a certain amount of focus as a consequence.  PWAs can help here; they are a compelling alternative, not just from a developers standpoint, but from a resourcing one too.  
 
 However, the downside of PWAs is that they are more complicated than normal web apps. Writing one from scratch is just less straightforward than a classic web app. There are easy onramps to building a PWA that help you fall into the pit of success.  This post will highlight one of these.  How you can travel from zero to a PWA of your very own using React and TypeScript.
 
@@ -175,7 +175,7 @@ test('renders about link', () => {
 });
 ```
 
-You'll have noticed that in our new `App.tsx` we import two new components; `About` and `Home`.  Let's create those.  First `About.tsx`:
+You'll have noticed that in our new `App.tsx` we import two new components (or pages); `About` and `Home`.  Let's create those.  First `About.tsx`:
 
 ```tsx
 import React from "react";
@@ -210,7 +210,7 @@ Now we've split up our app into multiple sections, we're going to split the code
   269 B     build/static/css/main.5ecd60fb.chunk.css
 ```
 
-Notice the `build/static/js/main.bc740179.chunk.js` file which represents the compiled output of building the TypeScript files that make up our app.
+Notice the `build/static/js/main.bc740179.chunk.js` file.  This is our `single-file.js`.  It represents the compiled output of building the TypeScript files that make up our app.  It will grow and grow as our app grows, eventually becoming problematic from a user loading speed perspective.
 
 `create-react-app` is built upon webpack.  There is excellent support for code splitting in webpack and hence [create-react-app supports it by default](https://reactjs.org/docs/code-splitting.html#code-splitting).  Let's apply it to our app.  Again we're going to change `App.tsx`.
 
@@ -289,7 +289,7 @@ This is now a code split application.  How can we tell?  If we run `yarn build` 
 
 Note that we now have multiple `*.chunk.js` files.  Our initial `main.*.chunk.js` and then `3.*.chunk.js` representing `Home.tsx` and `4.*.chunk.js` representing `Home.tsx`.
 
-As we continue to build out our app from this point we'll have a great approach in place to ensure each built file isn't too large.
+As we continue to build out our app from this point we'll have a great approach in place to ensure that users load files as they need to and that those files should not be too large.  Great performance which will scale.
 
 ---------------
 
