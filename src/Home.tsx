@@ -1,7 +1,7 @@
 import React from "react";
 
 const Home: React.FC = () => (
-  <div>Welcome to your PWA!</div>
+  <h1>Welcome to your PWA!</h1>
 );
 
 export default Home;
