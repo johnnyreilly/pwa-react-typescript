@@ -39,7 +39,17 @@ From web app to PWA is incredibly simple; it’s just a question of opting in to
 serviceWorker.unregister();
 ```
 
-As the hint suggests, swap `serviceWorker.unregister()` for `serviceWorker.register()` and you now have a PWA.  Amazing!
+As the hint suggests, swap `serviceWorker.unregister()` for `serviceWorker.register()` and you now have a PWA.  Amazing! What does this mean?  Well to [quote the docs](https://create-react-app.dev/docs/making-a-progressive-web-app/#why-opt-in):
+
+> - All static site assets are cached so that your page loads fast on subsequent visits, regardless of network connectivity (such as 2G or 3G). Updates are downloaded in the background.
+> - Your app will work regardless of network state, even if offline. This means your users will be able to use your app at 10,000 feet and on the subway.
+> 
+> ... it will take care of generating a service worker file that will automatically
+precache all of your local assets and keep them up to date as you deploy updates.
+The service worker will use a [cache-first strategy](https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/#cache-falling-back-to-network)
+for handling all requests for local assets, including
+[navigation requests](https://developers.google.com/web/fundamentals/primers/service-workers/high-performance-loading#first_what_are_navigation_requests) for your HTML, ensuring that your web app is consistently fast, even on a slow
+or unreliable network.
 
 Under the bonnet, `create-react-app` is achieving this through the use of technology called ["Workbox"](https://developers.google.com/web/tools/workbox). Workbox describes itself as:
 
@@ -181,7 +191,7 @@ You'll have noticed that in our new `App.tsx` we import two new components (or p
 import React from "react";
 
 const About: React.FC = () => (
-  <div>This is a PWA</div>
+  <h1>This is a PWA</h1>
 );
 
 export default About;
@@ -193,7 +203,7 @@ Then `Home.tsx`:
 import React from "react";
 
 const Home: React.FC = () => (
-  <div>Welcome to your PWA!</div>
+  <h1>Welcome to your PWA!</h1>
 );
 
 export default Home;
@@ -291,12 +301,33 @@ Note that we now have multiple `*.chunk.js` files.  Our initial `main.*.chunk.js
 
 As we continue to build out our app from this point we'll have a great approach in place to ensure that users load files as they need to and that those files should not be too large.  Great performance which will scale.
 
----------------
+#### Deploy your PWA
 
-talk about limitations with the existing create-react-app approach. (eg the workbox served from CDN issue)  Show how they can be addressed by ejecting and tweaking configuration.  Link back to github issue which may mean this is unnecesary in future.
-finally, if there's a need for the app to live in a subdirectory of your website (mine did), how is this achieved?
+Now that we have our basic PWA in place, let's deploy it so the outside world can appreciate it.  We're going to use [Netlify](https://www.netlify.com/) for this.
 
-Base-url
-Install button
+The source code of our PWA lives on GitHub here: https://github.com/johnnyreilly/pwa-react-typescript
 
+We're going to log into Netlify, click on the "Create a new site" option and select GitHub as the provider.  We'll need to authorize Netlify to access our GitHub.
+
+![netlify-auth](./netlify-auth.png)
+
+You may need to click the "Configure Netlify on GitHub" button to grant permissions for Netlify to access your repo like so:
+
+![netlify-repo-permissions](./netlify-repo-permissions.png)
+
+Then you can select your repo from within Netlify. All of the default settings that Netlify provides should work for our use case:
+
+![netlify-deploy-settings](./netlify-deploy-settings.png)
+
+Let's hit the magic "Deploy site" button! In a matter of minutes you'll find that Netlify has deployed your PWA.
+
+![netlify-deployed](./netlify-deployed.png)
+
+If we browse to the URL provided by Netlify we'll be able to see the deployed PWA in action.  (You also have the opportunity to set up a custom domain name that you would typically want outside of a simple demo such as this.) Importantly this will be served over HTTPS which will allow our Service Worker to operate.
+
+Now that we know it's there, let's see how what we've built holds up according to the professionals. We're going to run the Google Chrome Developer Tools Audit against our PWA: 
+
+![pwa-audit](./pwa-audit.png)
+
+That is a good start for our PWA!
 
