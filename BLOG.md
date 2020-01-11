@@ -297,7 +297,7 @@ This is now a code split application.  How can we tell?  If we run `yarn build` 
   228 B             build/static/js/3.eed49094.chunk.js
 ```
 
-Note that we now have multiple `*.chunk.js` files.  Our initial `main.*.chunk.js` and then `3.*.chunk.js` representing `Home.tsx` and `4.*.chunk.js` representing `Home.tsx`.
+Note that we now have multiple `*.chunk.js` files.  Our initial `main.*.chunk.js` and then `3.*.chunk.js` representing `Home.tsx` and `4.*.chunk.js` representing `About.tsx`.
 
 As we continue to build out our app from this point we'll have a great approach in place to ensure that users load files as they need to and that those files should not be too large.  Great performance which will scale.
 
@@ -330,4 +330,8 @@ Now that we know it's there, let's see how what we've built holds up according t
 ![pwa-audit](./pwa-audit.png)
 
 That is a good start for our PWA!
+
+[This post was originally published on LogRocket.](https://blog.logrocket.com/from-create-react-app-to-pwa/)  
+
+[The source code for this project can be found here.](https://github.com/johnnyreilly/pwa-react-typescript)
 
